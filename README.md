@@ -49,10 +49,10 @@ The server-side component handles the entire process:
 
 | Service             | Supported | domain-specific               |
 | ------------------- | --------- | ----------------------------- |
-| Bilibili            | [x]       | `bibili.com`, `b23.tv`        |
-| Youtube             | [x]       | `youtube.com`, `youtu.be`     |
-| Weixin              | [x]       | `mp.weixin.qq.com`            |
-| NetEase Cloud Music | [x]       | `music.163.com`, `163cn.tv`   |
+| Bilibili            | Yes       | `bibili.com`, `b23.tv`        |
+| Youtube             | Yes       | `youtube.com`, `youtu.be`     |
+| Weixin              | Yes       | `mp.weixin.qq.com`            |
+| NetEase Cloud Music | Yes       | `music.163.com`, `163cn.tv`   |
 | Xiaohongshu         | (WIP)     | `xhs.link`, `xiaohongshu.com` |
 | Taobao              | (WIP)     | `t.cn`                        |
 
