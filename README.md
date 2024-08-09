@@ -5,9 +5,7 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Hidden dangers](#hidden-dangers)
 - [Features](#features)
-- [Implementation](#implementation)
 - [Supported Services](#supported-services)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -15,18 +13,8 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
   - [Configuration](#configuration)
   - [Development](#development)
   - [Production](#production)
+- [API Docs](#api-docs)
 - [LISENSE](#lisense)
-
-## Hidden dangers
-
-Shortened URLs often conceal sophisticated tracking mechanisms, covertly harvesting data during redirection:
-- Activation timestamp
-- Sharer's unique identifier
-- Device specifications
-- Geolocation
-- Potentially sensitive personal information
-
-This data enables platforms to establish user relationship graphs, optimize recommendation algorithms, conduct targeted advertising, and analyze user behavior patterns.
 
 ## Features
 
@@ -35,14 +23,6 @@ This data enables platforms to establish user relationship graphs, optimize reco
 3. Multiple domain-specific cleaners
 4. RESTful API for seamless integration
 5. 100% TypeScript implementation
-
-## Implementation
-
-The server-side component handles the entire process:
-1. Receives the short URL
-2. Resolves it to the full URL with trackers
-3. Applies sophisticated cleaning algorithms to remove tracking parameters
-4. Returns a clean, tracker-free URL
 
 
 ## Supported Services
@@ -97,6 +77,9 @@ bun run build
 bun run start
 ```
 
+## API Docs
+
+Look at the [code](https://github.com/Yuiinars/short-link-tracker-remover/blob/main/src/routes.ts#L46-L85)
 
 ## LISENSE
 
