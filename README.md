@@ -62,7 +62,11 @@ bun install
 
 ### Configuration
 
-Configuration is stored in `./src/config.ts`, you can modify it to fit your needs.
+modify `src/config.example.ts` to your needs:
+
+```bash
+cp src/config.example.ts src/config.ts
+```
 
 ### Development
 
