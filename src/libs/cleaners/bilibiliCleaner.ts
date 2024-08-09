@@ -11,7 +11,7 @@ export function bilibiliCleaner(url: URL): CleanerResult {
 
     if (url.hostname === "b23.tv") {
         // b23.tv direct link
-        debugInfo.push("Processing b23.tv link");
+        debugInfo.push("[Bilibili Rules] Processing b23.tv link");
         const pathMatch = url.pathname.match(/^\/(av\d+|BV[\w]+)/);
         if (pathMatch) {
             url = new URL(`https://www.bilibili.com/video/${pathMatch[1]}`);

@@ -11,7 +11,6 @@ export function cleanUrl(url: URL): CleanUrlResult {
     const { cleaner, debugInfo: cleanerInfo } = getCleanerForDomain(url.hostname);
     const { url: cleanedUrl, debugInfo: cleanerDebugInfo } = cleaner(url);
 
-    // 确保 debugInfo 是字符串数组
     const debugInfo: string[] = [
       ...(Array.isArray(cleanerInfo) ? cleanerInfo : [cleanerInfo]),
       ...(Array.isArray(cleanerDebugInfo) ? cleanerDebugInfo : [cleanerDebugInfo])

@@ -79,7 +79,7 @@ bun run start
 
 ## API Docs
 
-Look at the [code](https://github.com/Yuiinars/short-link-tracker-remover/blob/main/src/routes.ts#L46-L85)
+See the [API.md](API.md)
 
 ## LISENSE
 

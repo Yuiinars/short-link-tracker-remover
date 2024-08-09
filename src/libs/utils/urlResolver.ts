@@ -20,9 +20,17 @@ export async function resolveUrl(url: string, maxRedirects: number = 5): Promise
       followRedirect: true,
       maxRedirects: maxRedirects,
       throwHttpErrors: false,
+      https: {
+        rejectUnauthorized: false,
+        checkServerIdentity: (hostname, cert) => {
+          if (cert && !cert.subject.CN) {
+            console.warn(`Warning: Invalid certificate for ${hostname}`);
+          }
+          return undefined;
+        },
+      },
     });
 
-    // 使用响应的 url 属性获取最终 URL
     currentUrl = new URL(response.url);
   } catch (error) {
     if (error instanceof HTTPError) {
