@@ -4,12 +4,11 @@
   "description": "A high-performance, TypeScript-based API that swiftly intercepts and sanitizes short links, removing tracking parameters.",
   "type": "module",
   "author": "Yuiinars",
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "license": "GPL-3.0-only",
   "scripts": {
     "dev": "bun run --watch src/server.ts",
-    "build": "bun build ./src/server.ts --outdir ./dist",
-    "start": "bun run dist/server.js"
+    "start": "bun run src/server.ts"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

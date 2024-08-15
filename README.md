@@ -81,7 +81,6 @@ bun run dev
 ### Production
 
 ```
-bun run build
 bun run start
 ```
 

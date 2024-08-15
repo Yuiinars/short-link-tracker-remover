@@ -2,7 +2,6 @@ import { OptionsOfTextResponseBody, Response as GotResponse } from 'got';
 import { gotSsrf } from 'got-ssrf'
 import * as cheerio from 'cheerio';
 
-
 const previewHeaders: Record<string, string> = {
   "User-Agent": "Mozilla/5.0 (compatible; tracker-remover/1.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md)",
   "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
