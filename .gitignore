@@ -177,3 +177,5 @@ dist
 # Bun
 bun-cache
 bun.lockb
+
+src/config.ts

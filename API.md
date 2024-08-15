@@ -1,14 +1,19 @@
-# Short Link Tracker Remover API | Documentation
+# Short Link Tracker Remover | API Documentation
 
-## Endpoint
+## Endpoints
 
-`POST /clearLink`
+1. [POST /clearLink](#post-clearlink)
+2. [POST /getPreview](#post-getpreview)
 
-## Description
+---
+
+## POST /clearLink
+
+### Description
 
 Cleans a list of links by removing tracking parameters and resolving short URLs.
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -20,9 +25,9 @@ Cleans a list of links by removing tracking parameters and resolving short URLs.
 | ----- | -------- | ---------------------------- | -------- |
 | links | string[] | Array of links to be cleaned | Yes      |
 
-## Response
+### Response
 
-### Successful Response
+#### Successful Response
 
 **Status Code:** 200 OK
 
@@ -56,9 +61,9 @@ Each object in the `cleanedLinks` array contains:
 | cleaned   | string   | Cleaned link               |
 | debugInfo | string[] | Array of debug information |
 
-## Example
+### Example
 
-### Request
+#### Request
 
 Request:
 
@@ -77,7 +82,7 @@ Authorization: Bearer <token>
 }
 ```
 
-### Response
+#### Response
 
 ```json
 {
@@ -113,5 +118,118 @@ Authorization: Bearer <token>
             ]
         }
     ]
+}
+```
+
+---
+
+## POST /getPreview
+
+### Description
+
+Generates a preview for a single URL, including metadata such as title, description, and image.
+
+### Request Body
+
+```json
+{
+  "url": "string"
+}
+```
+
+| Field | Type   | Description         | Required |
+| ----- | ------ | ------------------- | -------- |
+| url   | string | URL to be previewed | Yes      |
+
+### Response
+
+#### Successful Response
+
+**Status Code:** 200 OK
+
+```json
+{
+  "status": "string",
+  "message": "string",
+  "time": "string",
+  "preview": {
+    "url": "string",
+    "title": "string",
+    "description": "string",
+    "image": "string",
+    "ogMetadata": {
+      "key": "string"
+    },
+    "twitterMetadata": {
+      "key": "string"
+    }
+  }
+}
+```
+
+| Field   | Type   | Description                       |
+| ------- | ------ | --------------------------------- |
+| status  | string | Preview generation status         |
+| message | string | Preview generation status message |
+| time    | string | ISO-8601 UTC timestamp            |
+| preview | object | Preview information for the URL   |
+
+The `preview` object contains:
+
+| Field           | Type     | Description                                   |
+| --------------- | -------- | --------------------------------------------- |
+| url             | string   | The URL of the previewed page                 |
+| title           | string   | The title of the previewed page               |
+| keywords        | string[] | An array of keywords associated with the page |
+| description     | string   | A brief description of the page content       |
+| images          | object   | Container for image-related information       |
+| images.favicon  | string   | Website's favicon                             |
+| images.banner   | string   | Website's banner image                        |
+| ogMetadata      | object   | Open Graph metadata key-value pairs           |
+| twitterMetadata | object   | Twitter Card metadata key-value pairs         |
+
+### Example
+
+#### Request
+
+```http
+POST /getPreview
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+```json
+{
+  "url": "https://example.com"
+}
+```
+
+#### Response
+
+```json
+{
+  "status": "success",
+  "message": "URL preview generated successfully",
+  "time": "2011-12-13T14:15:16.789Z",
+  "preview": {
+    "url": "https://example.com",
+    "title": "Example Domain",
+    "keywords": ["example", "domain"],
+    "description": "This domain is for use in illustrative examples in documents.",
+    "images": {
+      "favicon": "https://icon.horse/icon/example.com",
+      "banner": "https://example.com/image.jpg",
+    },
+    "ogMetadata": {
+      "title": "Example Domain",
+      "description": "This domain is for use in illustrative examples in documents.",
+      "image": "https://example.com/image.jpg"
+    },
+    "twitterMetadata": {
+      "card": "summary_large_image",
+      "title": "Example Domain",
+      "description": "This domain is for use in illustrative examples in documents.",
+      "image": "https://example.com/image.jpg"
+    }
+  }
 }
 ```

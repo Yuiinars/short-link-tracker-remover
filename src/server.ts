@@ -1,24 +1,34 @@
 // ./server.ts
-import Fastify, { type FastifyInstance } from 'fastify';
-import { port } from './config';
+import Fastify from 'fastify';
+import { serverConfig } from './config';
 import routes from './routes';
 import corsMiddleware from './middlewares/cors';
 import { verifyToken } from './middlewares/auth';
+import { rateLimitMiddleware } from './middlewares/rate-limit';
 
-const fastify: FastifyInstance = Fastify({ logger: true });
+const { port, host, enableLogging, trustProxy } = serverConfig;
+const ctx = Fastify({
+  logger: enableLogging,
+  trustProxy: trustProxy
+});
 
 async function start(): Promise<void> {
+  await rateLimitMiddleware(ctx);
+
+  await corsMiddleware(ctx);
+
+  ctx.addHook('preHandler', verifyToken);
+
+  ctx.register((instance, opts, done) => {
+    routes.forEach(route => instance.route(route));
+    done();
+  });
+
   try {
-    await corsMiddleware(fastify);
-
-    fastify.addHook('preHandler', verifyToken);
-
-    routes.forEach(route => fastify.route(route));
-
-    await fastify.listen({ port });
-    fastify.log.info(`Server is running on port ${port}`);
+    await ctx.listen({ port, host });
+    ctx.log.info(`Server is running on http://${host}:${port}`);
   } catch (err) {
-    fastify.log.error(err);
+    ctx.log.error(err);
     process.exit(1);
   }
 }

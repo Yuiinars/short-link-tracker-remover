@@ -7,22 +7,22 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Supported Services](#supported-services)
+- [API Docs](#api-docs)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Configuration](#configuration)
   - [Development](#development)
   - [Production](#production)
-- [API Docs](#api-docs)
 - [LISENSE](#lisense)
 
 ## Features
 
-1. High performance, scalability, and maintainability
-2. Efficient tracking parameter removal from URLs
-3. Multiple domain-specific cleaners
-4. RESTful API for seamless integration
-5. 100% TypeScript implementation
+- [x] :rocket: High performance, scalability, and maintainability
+- [x] :broom: Efficient tracking parameter removal from URLs
+- [x] :globe_with_meridians: Multiple domain-specific cleaners
+- [x] :electric_plug: RESTful API for seamless integration
+- [x] :computer: 100% TypeScript implementation
 
 
 ## Supported Services
@@ -37,6 +37,10 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 | Taobao              | (WIP)     | `t.cn`                        |
 
 Welcome to contribute, thanks!
+
+## API Docs
+
+See the [API.md](API.md)
 
 ## Requirements
 
@@ -80,10 +84,6 @@ bun run dev
 bun run build
 bun run start
 ```
-
-## API Docs
-
-See the [API.md](API.md)
 
 ## LISENSE
 

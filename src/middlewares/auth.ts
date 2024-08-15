@@ -1,6 +1,6 @@
 // ./middleware/auth.ts
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { validToken } from "../config";
+import { serverConfig } from "../config.ts";
 
 export function verifyToken(request: FastifyRequest, reply: FastifyReply, done: () => void): void {
     const authHeader = request.headers.authorization;
@@ -10,7 +10,7 @@ export function verifyToken(request: FastifyRequest, reply: FastifyReply, done: 
     }
 
     const token = authHeader.split(" ")[1];
-    if (token !== validToken) {
+    if (token !== serverConfig.validToken) {
         reply.code(401).send({ error: "Invalid token" });
         return;
     }

@@ -1,44 +1,103 @@
-// ./libs/utils/urlResolver.ts
-import got, { HTTPError } from 'got';
+import { OptionsOfTextResponseBody, Response as GotResponse } from 'got';
+import { gotSsrf } from 'got-ssrf'
+import * as cheerio from 'cheerio';
 
-const requestHeaders: Record<string, string> = {
-  "User-Agent":
-    "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+
+const previewHeaders: Record<string, string> = {
+  "User-Agent": "Mozilla/5.0 (compatible; tracker-remover/1.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md)",
   "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-  Accept:
-    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "upgrade-insecure-requests": "1",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
 };
 
-export async function resolveUrl(url: string, maxRedirects: number = 5): Promise<URL> {
-  let currentUrl = new URL(url);
+const defaultOptions: Partial<OptionsOfTextResponseBody> = {
+  method: 'GET',
+  followRedirect: true,
+  maxRedirects: 5,
+  throwHttpErrors: false,
+  responseType: 'text',
+  https: { rejectUnauthorized: true },
+  timeout: { request: 5000 },
+};
 
+async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
   try {
-    const response = await got(currentUrl.href, {
-      method: 'GET',
-      headers: requestHeaders,
-      followRedirect: true,
-      maxRedirects: maxRedirects,
-      throwHttpErrors: false,
-      https: {
-        rejectUnauthorized: false,
-        checkServerIdentity: (hostname, cert) => {
-          if (cert && !cert.subject.CN) {
-            console.warn(`Warning: Invalid certificate for ${hostname}`);
-          }
-          return undefined;
-        },
-      },
+    // If you wish to permit access to private resources,
+    // you may use the `got` function directly,
+    // but please be aware of the potential risk of server-side request forgery (SSRF).
+    return await gotSsrf(url, { ...defaultOptions, ...options });
+  } catch (error) {
+    console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw error;
+  }
+}
+
+export async function resolveUrl(url: string): Promise<URL> {
+  try {
+    const response = await fetchUrl(url);
+    return new URL(response.url);
+  } catch (error) {
+    console.error(`Error resolving URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to resolve URL: ${url}`);
+  }
+}
+
+interface URLPreview {
+  url: string;
+  title: string;
+  description: string;
+  image: string;
+  favicon: string;
+  keywords: string[];
+  ogMetadata: Record<string, string>;
+  twitterMetadata: Record<string, string>;
+}
+
+export async function previewURL(url: string): Promise<URLPreview> {
+  try {
+    const response = await fetchUrl(url, { headers: previewHeaders });
+    const $ = cheerio.load(response.body);
+
+    const metadata: Record<string, Record<string, string>> = { og: {}, twitter: {} };
+    let keywords: string[] = [];
+
+    $('meta').each((_, element) => {
+      const property = $(element).attr('property') || $(element).attr('name');
+      const content = $(element).attr('content');
+      if (property && content) {
+        if (property.startsWith('og:')) {
+          metadata.og[property.substring(3)] = content;
+        } else if (property.startsWith('twitter:')) {
+          metadata.twitter[property.substring(8)] = content;
+        } else if (property.toLowerCase() === 'keywords') {
+          keywords = content.split(',').map(keyword => keyword.trim()).filter(Boolean);
+        }
+      }
     });
 
-    currentUrl = new URL(response.url);
-  } catch (error) {
-    if (error instanceof HTTPError) {
-      console.error(`HTTP error resolving URL: ${error.message}`);
-    } else {
-      console.error(`Error resolving URL: ${(error as Error).message}`);
+    if (keywords.length === 0) {
+      $('meta[property="article:tag"]').each((_, element) => {
+        const content = $(element).attr('content');
+        if (content) {
+          keywords.push(content.trim());
+        }
+      });
     }
-  }
 
-  return currentUrl;
+    const hostname = new URL(response.url).hostname;
+    const favicon = `https://icon.horse/icon/${hostname}`;
+
+    return {
+      url: response.url,
+      title: $('title').first().text() || metadata.og['title'] || metadata.twitter['title'] || '',
+      description: metadata.og['description'] || metadata.twitter['description'] || $('meta[name="description"]').attr('content') || '',
+      image: metadata.og['image'] || metadata.twitter['image'] || '',
+      favicon,
+      keywords,
+      ogMetadata: metadata.og,
+      twitterMetadata: metadata.twitter,
+    };
+  } catch (error) {
+    console.error(`Error previewing URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to preview URL: ${url}`);
+  }
 }
