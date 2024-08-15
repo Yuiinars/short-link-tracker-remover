@@ -4,7 +4,7 @@ import { serverConfig } from './config';
 import routes from './routes';
 import corsMiddleware from './middlewares/cors';
 import { verifyToken } from './middlewares/auth';
-import { rateLimitMiddleware } from './middlewares/rate-limit';
+import { rateLimitMiddleware } from './middlewares/rateLimit';
 
 const { port, host, enableLogging, trustProxy } = serverConfig;
 const ctx = Fastify({
