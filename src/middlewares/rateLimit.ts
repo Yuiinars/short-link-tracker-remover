@@ -2,19 +2,27 @@
 import { FastifyInstance } from 'fastify';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { serverConfig } from '../config';
+import { getClientIP } from '../libs/utils/getClientIP';
 
-const { rateLimit, realIpHeaders } = serverConfig;
+const { rateLimit } = serverConfig;
 
 export async function rateLimitMiddleware(ctx: FastifyInstance): Promise<void> {
     await ctx.register(fastifyRateLimit, {
         max: rateLimit.max,
         timeWindow: rateLimit.timeWindow,
         keyGenerator: (request) => {
-            for (const header of realIpHeaders) {
-                const ip = request.headers[header.toLowerCase()];
-                if (ip) return Array.isArray(ip) ? ip[0] : ip;
+            const clientIP = getClientIP(request);
+            return clientIP || request.ip;
+        },
+        errorResponseBuilder: function (request, context) {
+            return {
+                status: 'error',
+                message: 'Too Many Requests',
+                time: new Date().toISOString(),
+                expiresIn: (context.ttl / 1000), // seconds
+                statusCode: 429
             }
-            return request.ip;
         }
     });
+    ctx.log.info("Rate-Limit middleware registered");
 }

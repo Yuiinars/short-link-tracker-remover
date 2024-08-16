@@ -2,6 +2,61 @@
 // Rename this file to config.ts before running.
 import packageJson from "../package.json";
 
+
+export const serverConfig: ServerConfig = {
+    version: packageJson.version,
+    
+    // Server Configuration, see https://fastify.dev/docs/latest/Reference/Server/#listen
+    host: "localhost",      // API Listening IP (:: / 0.0.0.0 for all)
+    port: 3882,             // API Listening Port
+    
+    // API Token, Please change it to your own token
+    validToken: "please change me",
+    
+    // Maximum number of links that can be processed in a single /clearLink request
+    maxLinks: 10,
+    
+    // Rate Limit, see https://github.com/fastify/fastify-rate-limit
+    rateLimit: {
+        max: 60,           // 60 requests
+        timeWindow: '1h'   // per hour, see https://github.com/vercel/ms#examples
+    },
+    
+    // Cloudflare Turnstile (like Google reCAPTCHA), A more private and secure alternative.
+    // Go to https://dash.cloudflare.com/?to=/:account/turnstile/add to get your keys,
+    // MUST NOT BE EMPTY, for security reasons
+    cfPrivateKey: "",
+
+    // Special Token to temporarily bypass Turnstile validation, 
+    // for API debugging purposes.
+    // Disable this feature if empty.
+    cfBypassToken: "",
+    
+    // Possibly enable logging in development, useful for debugging
+    enableLogging: false,
+
+    // Enable if your server is behind a reverse proxy
+    // (Nginx, Cloudflare, etc.)
+    trustProxy: false,
+
+    // Common header for real IP,
+    // alternatives: 'X-Forwarded-For', 'CF-Connecting-IP' (Cloudflare), 'X-Real-IP' (Nginx)
+    realIpHeaders: ['X-Real-IP', 'X-Forwarded-For']
+};
+
+export const corsConfig: CorsConfig = {
+    // API CORS allowed origins,
+    // see https://developer.mozilla.org/docs/Web/HTTP/Headers/Origin
+    
+    // Replace with your own domain
+    allowedOrigins: ["http://localhost:3000", "https://example.com"],
+    allowedMethods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Turnstile-Response"],
+    exposedHeaders: ["Content-Disposition"],
+    credentials: true,
+    corsTTL: 86400, // seconds (1 day)
+};
+
 export interface ServerConfig {
     version: string;
     host: string;
@@ -12,6 +67,8 @@ export interface ServerConfig {
         max: number;
         timeWindow: string;
     };
+    cfPrivateKey: string;
+    cfBypassToken: string;
     enableLogging: boolean;
     trustProxy: boolean;
     realIpHeaders: string[];
@@ -25,29 +82,3 @@ export interface CorsConfig {
     credentials: boolean;
     corsTTL: number;
 }
-
-export const serverConfig: ServerConfig = {
-    version: packageJson.version,
-    host: "localhost",      // API Listening IP, see: https://fastify.dev/docs/latest/Reference/Server/#listen
-    port: 3882,             // API Listening Port
-    validToken: "22334455", // API Token, Please change it to your own token
-    maxLinks: 10,           // Maximum number of links that can be processed in a single /clearLink request
-    rateLimit: {
-        max: 120,           // 120 requests
-        timeWindow: '1h'    // per hour, see https://github.com/vercel/ms#examples
-    },
-    enableLogging: true,    // Possibly disable logging in production
-    trustProxy: false,       // Enable if your server is behind a reverse proxy (e.g. Nginx, Cloudflare)
-    // Common header for real IP, alternatives: 'X-Forwarded-For', 'CF-Connecting-IP' (Cloudflare)
-    realIpHeaders: ['X-Real-IP', 'X-Forwarded-For']
-};
-
-export const corsConfig: CorsConfig = {
-    // API CORS allowed origins, see https://developer.mozilla.org/docs/Web/HTTP/Headers/Origin
-    allowedOrigins: ["http://localhost:3000", "https://example.com"], // Replace with your own domain
-    allowedMethods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["Content-Disposition"],
-    credentials: true,
-    corsTTL: 86400, // 24 hours
-};

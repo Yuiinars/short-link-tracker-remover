@@ -1,6 +1,6 @@
 {
   "name": "short-link-tracker-remover",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A high-performance, TypeScript-based API that swiftly intercepts and sanitizes short links, removing tracking parameters.",
   "type": "module",
   "author": "Yuiinars",
