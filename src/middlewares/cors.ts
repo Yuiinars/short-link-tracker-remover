@@ -2,7 +2,6 @@
 import cors from "@fastify/cors";
 import { corsConfig } from "../config.ts";
 import type { FastifyInstance } from 'fastify';
-
 export default async function corsMiddleware(fastify: FastifyInstance): Promise<void> {
   const {
     allowedOrigins = [],

@@ -71,6 +71,7 @@ Request:
 POST /clearLink
 Content-Type: application/json
 Authorization: Bearer <token>
+Turnstile-Response: <cloudflare turnstile response>
 ```
 ```json
 {
@@ -196,6 +197,7 @@ The `preview` object contains:
 POST /getPreview
 Content-Type: application/json
 Authorization: Bearer <token>
+Turnstile-Response: <cloudflare turnstile response>
 ```
 ```json
 {

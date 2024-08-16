@@ -2,6 +2,7 @@ import type { RouteOptions, RouteHandlerMethod } from 'fastify';
 import { serverConfig } from './config.ts';
 import { resolveUrl, previewURL } from "./libs/utils/urlResolver";
 import { cleanUrl } from "./libs/utils/urlCleaner";
+import { API_R } from './libs/utils/response';
 import { URL } from 'url';
 
 interface Link {
@@ -9,18 +10,6 @@ interface Link {
   cleaned: URL;
   debugInfo: string[];
 }
-
-interface ApiResponse {
-  status: "success" | "error";
-  message: string;
-  time: string;
-}
-
-const createApiResponse = (message: string, status: "success" | "error" = "success"): ApiResponse => ({
-  status,
-  message,
-  time: new Date().toISOString()
-});
 
 const versionRoute: RouteOptions = {
   method: 'GET',
@@ -41,12 +30,12 @@ const versionRoute: RouteOptions = {
   handler: async (request, reply) => {
     try {
       return {
-        ...createApiResponse("Welcome to the Link Cleaner API!"),
+        ...API_R("Welcome to the Link Cleaner API!"),
         version: serverConfig.validToken
       };
     } catch (error) {
       request.log.error("Error in version route:", error);
-      reply.code(500).send(createApiResponse("Internal server error", "error"));
+      reply.code(500).send(API_R("Internal server error", "error"));
     }
   }
 };
@@ -96,12 +85,12 @@ const clearLinkRoute: RouteOptions = {
     const { links } = request.body as { links: string[] };
 
     if (!Array.isArray(links) || links.length === 0) {
-      reply.code(400).send(createApiResponse("Invalid or empty links array", "error"));
+      reply.code(400).send(API_R("Invalid or empty links array", "error"));
       return;
     }
 
     if (links.length > serverConfig.maxLinks) {
-      reply.code(400).send(createApiResponse(`Exceeded maximum number of links (${serverConfig.maxLinks})`, "error"));
+      reply.code(400).send(API_R(`Exceeded maximum number of links (${serverConfig.maxLinks})`, "error"));
       return;
     }
 
@@ -109,12 +98,12 @@ const clearLinkRoute: RouteOptions = {
       const cleanedLinks = await Promise.all(links.map(processLink(request)));
 
       return {
-        ...createApiResponse("Links processed successfully"),
+        ...API_R("Links processed successfully"),
         cleanedLinks,
       };
     } catch (error) {
       request.log.error("Error processing links:", error);
-      reply.code(500).send(createApiResponse("Error processing links", "error"));
+      reply.code(500).send(API_R("Error processing links", "error"));
     }
   }) as RouteHandlerMethod
 };
@@ -188,7 +177,7 @@ const getPreviewRoute: RouteOptions = {
     const { url } = request.body as { url: string };
 
     if (!url || typeof url !== 'string') {
-      reply.code(400).send(createApiResponse("Invalid URL", "error"));
+      reply.code(400).send(API_R("Invalid URL", "error"));
       return;
     }
 
@@ -196,12 +185,12 @@ const getPreviewRoute: RouteOptions = {
       const preview = await previewURL(url);
 
       return {
-        ...createApiResponse("URL preview generated successfully"),
+        ...API_R("URL preview generated successfully"),
         preview,
       };
     } catch (error) {
       request.log.error("Error generating URL preview:", error);
-      reply.code(500).send(createApiResponse("Error generating URL preview", "error"));
+      reply.code(500).send(API_R("Error generating URL preview", "error"));
     }
   }) as RouteHandlerMethod
 };

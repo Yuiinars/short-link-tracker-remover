@@ -179,3 +179,4 @@ bun-cache
 bun.lockb
 
 src/config.ts
+staged_changes.diff
