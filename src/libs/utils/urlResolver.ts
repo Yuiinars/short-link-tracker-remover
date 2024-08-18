@@ -42,9 +42,18 @@ export async function resolveUrl(url: string): Promise<URL> {
 export async function resolveTbcnUrl(url: string): Promise<URL> {
   try {
     const response = await fetchUrl(url);
-    const match = response.body.match(/var\s+url\s*=\s*['"](.+?)['"]/);
-    if (match && match[1]) {
-      return new URL(match[1]);
+    let extractedUrl: string | null = null;
+
+    let match = response.body.match(/var\s+url\s*=\s*['"](.+?)['"]/);
+    if (match && match[1]) extractedUrl = match[1];
+
+    if (!extractedUrl) {
+      match = response.body.match(/var\s+invalidUrl\s*=\s*["'](.+?)["']/);
+      if (match && match[1]) extractedUrl = match[1];
+    }
+
+    if (extractedUrl) {
+      return new URL(extractedUrl);
     } else {
       throw new Error('Failed to extract URL from tb.cn response');
     }
