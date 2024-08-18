@@ -4,8 +4,11 @@ import { youtubeCleaner } from "./cleaners/youtubeCleaner";
 import { bilibiliCleaner } from "./cleaners/bilibiliCleaner";
 import { weixinCleaner } from "./cleaners/weixinCleaner";
 import { wyyCleaner } from "./cleaners/wyyCleaner";
+import { tbcnCleaner } from "./cleaners/tbcnCleaner";
 
-type Cleaner = (url: URL) => { url: URL; debugInfo: string[] };
+type SyncCleaner = (url: URL) => { url: URL; debugInfo: string[] };
+type AsyncCleaner = (url: URL) => Promise<{ url: URL; debugInfo: string[] }>;
+type Cleaner = SyncCleaner | AsyncCleaner;
 
 interface CleanerResult {
     cleaner: Cleaner;
@@ -20,6 +23,7 @@ const cleaners: Record<string, Cleaner> = {
     "weixin.qq.com": weixinCleaner,
     "163cn.tv": wyyCleaner,
     "music.163.com": wyyCleaner,
+    "tb.cn": tbcnCleaner,
 };
 
 export function getCleanerForDomain(hostname: string): CleanerResult {

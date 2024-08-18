@@ -112,7 +112,7 @@ const clearLinkRoute: RouteOptions = {
 const processLink = (request: any) => async (link: string): Promise<Link> => {
   try {
     const resolvedUrl = await resolveUrl(link);
-    const { cleanedUrl, debugInfo } = cleanUrl(resolvedUrl);
+    const { cleanedUrl, debugInfo } = await cleanUrl(resolvedUrl);
     return {
       original: link,
       cleaned: cleanedUrl,
@@ -127,7 +127,6 @@ const processLink = (request: any) => async (link: string): Promise<Link> => {
     };
   }
 };
-
 
 const getPreviewRoute: RouteOptions = {
   method: "POST",

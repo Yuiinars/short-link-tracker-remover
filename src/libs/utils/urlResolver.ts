@@ -22,9 +22,6 @@ const defaultOptions: Partial<OptionsOfTextResponseBody> = {
 
 async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
   try {
-    // If you wish to permit access to private resources,
-    // you may use the `got` function directly,
-    // but please be aware of the potential risk of server-side request forgery (SSRF).
     return await gotSsrf(url, { ...defaultOptions, ...options });
   } catch (error) {
     console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -39,6 +36,21 @@ export async function resolveUrl(url: string): Promise<URL> {
   } catch (error) {
     console.error(`Error resolving URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw new Error(`Failed to resolve URL: ${url}`);
+  }
+}
+
+export async function resolveTbcnUrl(url: string): Promise<URL> {
+  try {
+    const response = await fetchUrl(url);
+    const match = response.body.match(/var\s+url\s*=\s*['"](.+?)['"]/);
+    if (match && match[1]) {
+      return new URL(match[1]);
+    } else {
+      throw new Error('Failed to extract URL from tb.cn response');
+    }
+  } catch (error) {
+    console.error(`Error resolving tb.cn URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to resolve tb.cn URL: ${url}`);
   }
 }
 
