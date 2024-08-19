@@ -27,14 +27,15 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 
 ## Supported Services
 
-| Service                 | Supported | domain-specific               |
-| ----------------------- | --------- | ----------------------------- |
-| Bilibili                | Yes       | `bibili.com`, `b23.tv`        |
-| Youtube                 | Yes       | `youtube.com`, `youtu.be`     |
-| Weixin                  | Yes       | `mp.weixin.qq.com`            |
-| NetEase Cloud Music     | Yes       | `music.163.com`, `163cn.tv`   |
-| Xiaohongshu             | (WIP)     | `xhs.link`, `xiaohongshu.com` |
-| Taobao/GooFish (Xianyu) | Yes       | `t.cn`                        |
+| Service                 | Supported | domain-specific                        |
+| ----------------------- | --------- | -------------------------------------- |
+| Bilibili                | Yes       | `bibili.com`, `b23.tv`                 |
+| Youtube                 | Yes       | `youtube.com`, `youtu.be`              |
+| Weixin                  | Yes       | `mp.weixin.qq.com`                     |
+| NetEase Cloud Music     | Yes       | `music.163.com`, `163cn.tv`            |
+| Xiaohongshu             | (WIP)     | `xhs.link`, `xiaohongshu.com`          |
+| Taobao/GooFish (Xianyu) | Yes       | `m.tb.cn`, `tb.cn`                     |
+| Spotify                 | Yes       | `spotify.app.link`, `open.spotify.com` |
 
 Welcome to contribute, thanks!
 

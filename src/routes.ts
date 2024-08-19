@@ -3,7 +3,6 @@ import { serverConfig } from './config.ts';
 import { resolveUrl, previewURL } from "./libs/utils/urlResolver";
 import { cleanUrl } from "./libs/utils/urlCleaner";
 import { API_R } from './libs/utils/response';
-import { URL } from 'url';
 
 interface Link {
   original: string;
@@ -112,20 +111,22 @@ const clearLinkRoute: RouteOptions = {
 const processLink = (request: any) => async (link: string): Promise<Link> => {
   try {
     const resolvedUrl = await resolveUrl(link);
-    const { cleanedUrl, debugInfo } = await cleanUrl(resolvedUrl);
-    return {
-      original: link,
-      cleaned: encodeURI(cleanedUrl.toString()),
-      debugInfo: debugInfo.map(String),
-    };
+    return await cleanAndFormatUrl(resolvedUrl);
   } catch (error) {
     request.log.error(`Error processing link ${link}:`, error);
-    return {
-      original: link,
-      cleaned: encodeURI(link),
-      debugInfo: ["Error occurred during cleaning: " + (error instanceof Error ? error.message : String(error))],
-    };
+    const result = await cleanAndFormatUrl(new URL(link));
+    result.debugInfo.unshift(`Error occurred during cleaning: ${error instanceof Error ? error.message : String(error)}`);
+    return result;
   }
+};
+
+const cleanAndFormatUrl = async (url: URL): Promise<Link> => {
+  const { cleanedUrl, debugInfo } = await cleanUrl(url);
+  return {
+    original: url.toString(),
+    cleaned: encodeURI(cleanedUrl.toString()),
+    debugInfo: debugInfo.map(String),
+  };
 };
 
 const getPreviewRoute: RouteOptions = {

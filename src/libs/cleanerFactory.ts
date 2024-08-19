@@ -5,6 +5,7 @@ import { bilibiliCleaner } from "./cleaners/bilibiliCleaner";
 import { weixinCleaner } from "./cleaners/weixinCleaner";
 import { wyyCleaner } from "./cleaners/wyyCleaner";
 import { tbcnCleaner } from "./cleaners/tbcnCleaner";
+import { spotifyCleaner } from "./cleaners/spotifyCleaner";
 
 type SyncCleaner = (url: URL) => { url: URL; debugInfo: string[] };
 type AsyncCleaner = (url: URL) => Promise<{ url: URL; debugInfo: string[] }>;
@@ -24,12 +25,13 @@ const cleaners: Record<string, Cleaner> = {
     "163cn.tv": wyyCleaner,
     "music.163.com": wyyCleaner,
     "tb.cn": tbcnCleaner,
+    "spotify.app.link": spotifyCleaner
 };
 
 export function getCleanerForDomain(hostname: string): CleanerResult {
     for (const [domain, cleaner] of Object.entries(cleaners)) {
         if (hostname.endsWith(domain)) {
-            return { cleaner, debugInfo: [`[${domain} cleaner] Processed.`] };
+            return { cleaner, debugInfo: [`[${domain.split('.')[0]} cleaner] Processed.`] };
         }
     }
     return { cleaner: baseCleaner, debugInfo: ['[Base Rules] Processed.'] };

@@ -14,7 +14,6 @@ export function youtubeCleaner(url: URL): CleanerResult {
     const youtubeParamsToRemove = [
         "feature",
         "ab_channel",
-        "si"
     ];
 
     youtubeParamsToRemove.forEach(param => {
