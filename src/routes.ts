@@ -30,7 +30,7 @@ const versionRoute: RouteOptions = {
     try {
       return {
         ...API_R("Welcome to the Link Cleaner API!"),
-        version: serverConfig.validToken
+        version: serverConfig.version
       };
     } catch (error) {
       request.log.error("Error in version route:", error);

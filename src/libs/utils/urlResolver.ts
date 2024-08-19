@@ -2,6 +2,7 @@ import { OptionsOfTextResponseBody, Response as GotResponse } from 'got';
 import { gotSsrf } from 'got-ssrf'
 import * as cheerio from 'cheerio';
 import robotsParser from 'robots-parser';
+import { serverConfig } from '../../config';
 
 const previewHeaders: Record<string, string> = {
   "User-Agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; tracker-remover/1.0.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md) Chrome/127.0.0.0 Safari/537.36",
@@ -22,54 +23,53 @@ const defaultOptions: Partial<OptionsOfTextResponseBody> = {
   headers: previewHeaders,
 };
 
-async function fetchUrlWithoutRobotsCheck(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
+async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
   try {
-    return await gotSsrf(url, { ...defaultOptions, ...options });
+    if (serverConfig.robotsEnabled) {
+      const isAllowed = await checkRobots(url);
+      if (!isAllowed) {
+        throw new Error(`Fetching not allowed by robots.txt: ${url}`);
+      }
+    }
+    const mergedOptions = {
+      ...defaultOptions,
+      ...options,
+      headers: {
+        ...defaultOptions.headers,
+        ...options.headers
+      }
+    };
+    return await gotSsrf(url, mergedOptions);
   } catch (error) {
     console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 }
 
-async function getRobotsTxt(url: string): Promise<string> {
-  const robotsUrl = new URL('/robots.txt', url).toString();
+
+async function checkRobots(url: string): Promise<boolean> {
   try {
-    const response = await fetchUrlWithoutRobotsCheck(robotsUrl);
-    return response.body;
+    const robotsUrl = new URL('/robots.txt', url).toString();
+    const response = await gotSsrf(robotsUrl, defaultOptions);
+    const robotsTxt = response.body;
+    const parsedRobots = robotsParser(url, robotsTxt);
+    return parsedRobots.isAllowed(url, 'tracker-remover') ?? true;
   } catch (error) {
     console.error(`Error fetching robots.txt: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    return '';
+    return true;
   }
 }
 
-function isAllowedByRobotsTxt(robotsTxt: string, url: string): boolean {
-  const parsedRobots = robotsParser(url, robotsTxt);
-  return parsedRobots.isAllowed(url, 'tracker-remover') ?? true;
-}
-
-async function checkRobotsBeforeFetch(url: string): Promise<boolean> {
-  const robotsTxt = await getRobotsTxt(url);
-  return isAllowedByRobotsTxt(robotsTxt, url);
-}
-
-async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
-  const isAllowed = await checkRobotsBeforeFetch(url);
-  if (!isAllowed) {
-    throw new Error(`Fetching not allowed by robots.txt: ${url}`);
-  }
-
-  return fetchUrlWithoutRobotsCheck(url, options);
-}
-
-export async function resolveUrl(url: string): Promise<URL> {
+export async function resolveUrl(url: string, userAgent?: string): Promise<URL> {
   try {
-    const response = await fetchUrl(url);
+    const response = await fetchUrl(url, { headers: userAgent ? { 'User-Agent': userAgent } : undefined });
     return new URL(response.url);
   } catch (error) {
     console.error(`Error resolving URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw new Error(`Failed to resolve URL: ${url}`);
   }
 }
+
 
 export async function resolveTbcnUrl(url: string): Promise<URL> {
   try {
