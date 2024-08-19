@@ -115,14 +115,14 @@ const processLink = (request: any) => async (link: string): Promise<Link> => {
     const { cleanedUrl, debugInfo } = await cleanUrl(resolvedUrl);
     return {
       original: link,
-      cleaned: encodeURIComponent(cleanedUrl.toString()),
+      cleaned: encodeURI(cleanedUrl.toString()),
       debugInfo: debugInfo.map(String),
     };
   } catch (error) {
     request.log.error(`Error processing link ${link}:`, error);
     return {
       original: link,
-      cleaned: encodeURIComponent(link),
+      cleaned: encodeURI(link),
       debugInfo: ["Error occurred during cleaning: " + (error instanceof Error ? error.message : String(error))],
     };
   }
