@@ -19,12 +19,22 @@ const defaultOptions: Partial<OptionsOfTextResponseBody> = {
   responseType: 'text',
   https: { rejectUnauthorized: true },
   timeout: { request: 3000 },
+  headers: previewHeaders,
 };
+
+async function fetchUrlWithoutRobotsCheck(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
+  try {
+    return await gotSsrf(url, { ...defaultOptions, ...options });
+  } catch (error) {
+    console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw error;
+  }
+}
 
 async function getRobotsTxt(url: string): Promise<string> {
   const robotsUrl = new URL('/robots.txt', url).toString();
   try {
-    const response = await fetchUrl(robotsUrl);
+    const response = await fetchUrlWithoutRobotsCheck(robotsUrl);
     return response.body;
   } catch (error) {
     console.error(`Error fetching robots.txt: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -48,12 +58,7 @@ async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody>
     throw new Error(`Fetching not allowed by robots.txt: ${url}`);
   }
 
-  try {
-    return await gotSsrf(url, { ...defaultOptions, ...options, headers: previewHeaders });
-  } catch (error) {
-    console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    throw error;
-  }
+  return fetchUrlWithoutRobotsCheck(url, options);
 }
 
 export async function resolveUrl(url: string): Promise<URL> {
@@ -90,6 +95,7 @@ export async function resolveTbcnUrl(url: string): Promise<URL> {
   }
 }
 
+
 interface URLPreview {
   url: string;
   title: string;
@@ -103,7 +109,7 @@ interface URLPreview {
 
 export async function previewURL(url: string): Promise<URLPreview> {
   try {
-    const response = await fetchUrl(url, { headers: previewHeaders });
+    const response = await fetchUrl(url);
     const $ = cheerio.load(response.body);
 
     const metadata: Record<string, Record<string, string>> = { og: {}, twitter: {} };
