@@ -25,7 +25,8 @@ const cleaners: Record<string, Cleaner> = {
     "163cn.tv": wyyCleaner,
     "music.163.com": wyyCleaner,
     "tb.cn": tbcnCleaner,
-    "spotify.app.link": spotifyCleaner
+    "spotify.app.link": spotifyCleaner,
+    "spotify.com": spotifyCleaner,
 };
 
 export function getCleanerForDomain(hostname: string): CleanerResult {
