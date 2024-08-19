@@ -16,7 +16,8 @@
     "cheerio": "^1.0.0",
     "fastify": "^4.28.1",
     "got": "^14.4.2",
-    "got-ssrf": "^3.0.0"
+    "got-ssrf": "^3.0.0",
+    "robots-parser": "^3.0.1"
   },
   "devDependencies": {
     "@types/bun": "latest",

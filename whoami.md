@@ -19,7 +19,17 @@ The Short Link Tracker Remover Bot is designed to enhance user privacy and secur
 
 Our bot identifies itself with the following User-Agent string:
 
-`Mozilla/5.0 (compatible; tracker-remover/1.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/bot.md)`
+- `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; tracker-remover/1.0.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md) Chrome/127.0.0.0 Safari/537.36`
+
+- `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; tracker-remover-previewer/1.0.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md) Chrome/127.0.0.0 Safari/537.36`
+
+Keywords: `tracker-remover`, `tracker-remover-previewer`.
+
+## Rate Limits
+
+Our bot follows these rate limits (default):
+
+- 60 requests per hour.
 
 ## For Webmasters
 

@@ -1,6 +1,7 @@
 import { OptionsOfTextResponseBody, Response as GotResponse } from 'got';
 import { gotSsrf } from 'got-ssrf'
 import * as cheerio from 'cheerio';
+import robotsParser from 'robots-parser';
 
 const previewHeaders: Record<string, string> = {
   "User-Agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; tracker-remover/1.0.0; +https://github.com/Yuiinars/short-link-tracker-remover/blob/main/whoami.md) Chrome/127.0.0.0 Safari/537.36",
@@ -17,12 +18,38 @@ const defaultOptions: Partial<OptionsOfTextResponseBody> = {
   throwHttpErrors: false,
   responseType: 'text',
   https: { rejectUnauthorized: true },
-  timeout: { request: 5000 },
+  timeout: { request: 3000 },
 };
 
-async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
+async function getRobotsTxt(url: string): Promise<string> {
+  const robotsUrl = new URL('/robots.txt', url).toString();
   try {
-    return await gotSsrf(url, { ...defaultOptions, ...options });
+    const response = await fetchUrl(robotsUrl);
+    return response.body;
+  } catch (error) {
+    console.error(`Error fetching robots.txt: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    return '';
+  }
+}
+
+function isAllowedByRobotsTxt(robotsTxt: string, url: string): boolean {
+  const parsedRobots = robotsParser(url, robotsTxt);
+  return parsedRobots.isAllowed(url, 'tracker-remover') ?? true;
+}
+
+async function checkRobotsBeforeFetch(url: string): Promise<boolean> {
+  const robotsTxt = await getRobotsTxt(url);
+  return isAllowedByRobotsTxt(robotsTxt, url);
+}
+
+async function fetchUrl(url: string, options: Partial<OptionsOfTextResponseBody> = {}): Promise<GotResponse<string>> {
+  const isAllowed = await checkRobotsBeforeFetch(url);
+  if (!isAllowed) {
+    throw new Error(`Fetching not allowed by robots.txt: ${url}`);
+  }
+
+  try {
+    return await gotSsrf(url, { ...defaultOptions, ...options, headers: previewHeaders });
   } catch (error) {
     console.error(`Error fetching URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
