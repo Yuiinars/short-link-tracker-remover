@@ -7,7 +7,7 @@ import { URL } from 'url';
 
 interface Link {
   original: string;
-  cleaned: URL;
+  cleaned: string;
   debugInfo: string[];
 }
 
@@ -115,14 +115,14 @@ const processLink = (request: any) => async (link: string): Promise<Link> => {
     const { cleanedUrl, debugInfo } = await cleanUrl(resolvedUrl);
     return {
       original: link,
-      cleaned: cleanedUrl,
+      cleaned: encodeURIComponent(cleanedUrl.toString()),
       debugInfo: debugInfo.map(String),
     };
   } catch (error) {
     request.log.error(`Error processing link ${link}:`, error);
     return {
       original: link,
-      cleaned: new URL(link),
+      cleaned: encodeURIComponent(link),
       debugInfo: ["Error occurred during cleaning: " + (error instanceof Error ? error.message : String(error))],
     };
   }

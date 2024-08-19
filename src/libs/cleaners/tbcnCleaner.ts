@@ -20,7 +20,7 @@ export async function tbcnCleaner(url: URL): Promise<CleanerResult> {
         // Goofish specific rules
         if (cleanedUrl.hostname.endsWith('goofish.com')) {
             debugInfo.push("[Goofish Rules] Detected goofish.com domain");
-            const params = new URLSearchParams(url.search);
+            const params = new URLSearchParams(cleanedUrl.search);
 
             if (params.has('userid') && params.has('bft') && params.has('bfp')) {
                 cleanedUrl.search = `?bft=${params.get('bft')}&bfp=${params.get('bfp')}`;
