@@ -2,6 +2,12 @@
 
 A high-performance, TypeScript-based API that swiftly intercepts and sanitizes short links, removing tracking parameters.
 
+![TypeScript 100%](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![Latest Version](https://img.shields.io/github/v/tag/Yuiinars/short-link-tracker-remover?label=Latest%20Version&style=for-the-badge)
+
+![Powered by Fastify](https://img.shields.io/badge/Fastify-000000?style=for-the-badge&logo=fastify&logoColor=white) [![Bun.sh Runtime](https://img.shields.io/badge/Bun_Runtime-000000?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh/)
+
+![Cloudflare Turnstile Supported](https://img.shields.io/badge/Cloudflare_Turnstile-F38020?style=for-the-badge&logo=cloudflare&logoColor=white) ![](https://img.shields.io/badge/Cheer.IO-E88C1F?style=for-the-badge&logo=cheerio&logoColor=white)
+
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
@@ -87,4 +93,4 @@ bun run start
 
 ## LISENSE
 
-GNU [GPLv3](LICENSE)
+[![GNU GPLv3](https://img.shields.io/github/license/Yuiinars/short-link-tracker-remover?logo=gnu&label=License)](LICENSE)
