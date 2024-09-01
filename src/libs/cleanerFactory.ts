@@ -6,7 +6,7 @@ import { weixinCleaner } from "./cleaners/weixinCleaner";
 import { wyyCleaner } from "./cleaners/wyyCleaner";
 import { tbcnCleaner } from "./cleaners/tbcnCleaner";
 import { spotifyCleaner } from "./cleaners/spotifyCleaner";
-import { jdComCleaner } from "./cleaners/jdcomCleaner";
+import { jdComCleaner } from "./cleaners/jdComCleaner";
 
 type SyncCleaner = (url: URL) => { url: URL; debugInfo: string[] };
 type AsyncCleaner = (url: URL) => Promise<{ url: URL; debugInfo: string[] }>;

@@ -1,4 +1,4 @@
-// ./libs/cleaners/jdcomCleaner.ts
+// ./libs/cleaners/jdComCleaner.ts
 import { baseCleaner, CleanerResult } from "./baseCleaner";
 
 export function jdComCleaner(url: URL): CleanerResult {
