@@ -6,6 +6,7 @@ import { weixinCleaner } from "./cleaners/weixinCleaner";
 import { wyyCleaner } from "./cleaners/wyyCleaner";
 import { tbcnCleaner } from "./cleaners/tbcnCleaner";
 import { spotifyCleaner } from "./cleaners/spotifyCleaner";
+import { jdComCleaner } from "./cleaners/jdcomCleaner";
 
 type SyncCleaner = (url: URL) => { url: URL; debugInfo: string[] };
 type AsyncCleaner = (url: URL) => Promise<{ url: URL; debugInfo: string[] }>;
@@ -27,6 +28,8 @@ const cleaners: Record<string, Cleaner> = {
     "tb.cn": tbcnCleaner,
     "spotify.app.link": spotifyCleaner,
     "spotify.com": spotifyCleaner,
+    "jd.com": jdComCleaner,
+    "3.cn": jdComCleaner
 };
 
 export function getCleanerForDomain(hostname: string): CleanerResult {

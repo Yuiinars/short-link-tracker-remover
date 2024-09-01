@@ -33,15 +33,16 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 
 ## Supported Services
 
-| Service                 | Supported | domain-specific                   |
-| ----------------------- | --------- | --------------------------------- |
-| Bilibili                | Yes       | `bibili.com`, `b23.tv`            |
-| Youtube                 | Yes       | `youtube.com`, `youtu.be`         |
-| Weixin                  | Yes       | `mp.weixin.qq.com`                |
-| NetEase Cloud Music     | Yes       | `music.163.com`, `163cn.tv`       |
-| Xiaohongshu             | (WIP)     | `xhs.link`, `xiaohongshu.com`     |
-| Taobao/GooFish (Xianyu) | Yes       | `m.tb.cn`, `tb.cn`                |
-| Spotify                 | Yes       | `spotify.app.link`, `spotify.com` |
+| Service                 | Supported              | domain-specific                   |
+| ----------------------- | ---------------------- | --------------------------------- |
+| Bilibili                | :white_check_mark: Yes | `bibili.com`, `b23.tv`            |
+| Youtube                 | :white_check_mark: Yes | `youtube.com`, `youtu.be`         |
+| Weixin                  | :white_check_mark: Yes | `mp.weixin.qq.com`                |
+| NetEase Cloud Music     | :white_check_mark: Yes | `music.163.com`, `163cn.tv`       |
+| Xiaohongshu             | :construction: (WIP)   | `xhs.link`, `xiaohongshu.com`     |
+| JD.com                  | :white_check_mark: Yes | `3.cn`                            |
+| Taobao/GooFish (Xianyu) | :white_check_mark: Yes | `m.tb.cn`, `tb.cn`                |
+| Spotify                 | :white_check_mark: Yes | `spotify.app.link`, `spotify.com` |
 
 Welcome to contribute, thanks!
 

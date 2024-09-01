@@ -1,6 +1,6 @@
 // ./libs/cleaners/baseCleaner.ts
 
-interface CleanerResult {
+export interface CleanerResult {
     url: URL;
     debugInfo: string[];
 }

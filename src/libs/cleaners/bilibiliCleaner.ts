@@ -1,59 +1,73 @@
 // ./libs/cleaners/bilibiliCleaner.ts
-import { baseCleaner } from "./baseCleaner";
-
-interface CleanerResult {
-    url: URL;
-    debugInfo: string[];
-}
+import { baseCleaner, CleanerResult } from "./baseCleaner";
 
 export function bilibiliCleaner(url: URL): CleanerResult {
-    let debugInfo: string[] = [];
-
     if (url.hostname === "b23.tv") {
-        // b23.tv direct link
-        debugInfo.push("[Bilibili Rules] Processing b23.tv link");
-        const pathMatch = url.pathname.match(/^\/(av\d+|BV[\w]+)/);
-        if (pathMatch) {
-            url = new URL(`https://www.bilibili.com/video/${pathMatch[1]}`);
-            debugInfo.push(`[Bilibili Rules] Converted b23.tv link to ${pathMatch[1]}`);
-        } else {
-            url.search = "";
-            debugInfo.push("[Bilibili Rules] b23.tv Processed.");
-        }
-        return { url, debugInfo };
+        return processB23tvLink(url);
     }
 
-    const { url: baseCleanedUrl, debugInfo: baseDebugInfo } = baseCleaner(url);
-    url = baseCleanedUrl;
-    debugInfo = [...debugInfo, ...baseDebugInfo];
+    const { url: baseCleanedUrl, debugInfo } = baseCleaner(url);
 
-    // start progress
+    processStartProgress(baseCleanedUrl, debugInfo);
+    processComment(baseCleanedUrl, debugInfo);
+    preserveDanmuParams(baseCleanedUrl, debugInfo);
+
+    return { url: baseCleanedUrl, debugInfo };
+}
+
+function processB23tvLink(url: URL): CleanerResult {
+    const debugInfo: string[] = ["[Bilibili Rules] Processing b23.tv link"];
+    const pathMatch = url.pathname.match(/^\/(av\d+|BV[\w]+)/);
+    if (pathMatch) {
+        url = new URL(`https://www.bilibili.com/video/${pathMatch[1]}`);
+        debugInfo.push(`[Bilibili Rules] Converted b23.tv link to ${pathMatch[1]}`);
+    } else {
+        url.search = "";
+        debugInfo.push("[Bilibili Rules] b23.tv Processed.");
+    }
+    return { url, debugInfo };
+}
+
+function processStartProgress(url: URL, debugInfo: string[]): void {
     const startProgress = url.searchParams.get("start_progress");
     if (startProgress) {
         const timeInSeconds = parseFloat(startProgress) / 1000;
         url.searchParams.set("t", timeInSeconds.toFixed(3));
-        debugInfo.push(
-            `[Bilibili Rules] Converted ?start_progress to ?t parameter: ${timeInSeconds.toFixed(3)}`
-        );
+        debugInfo.push(`[Bilibili Rules] Converted ?start_progress to ?t parameter: ${timeInSeconds.toFixed(3)}`);
     }
+}
 
-    // comment
+function processComment(url: URL, debugInfo: string[]): void {
     const commentOn = url.searchParams.get("comment_on");
     const commentRootId = url.searchParams.get("comment_root_id");
     const commentSecondaryId = url.searchParams.get("comment_secondary_id");
 
     if (commentOn === "1") {
-        if (commentSecondaryId) {
-            url.hash = `reply${commentSecondaryId}`;
-            debugInfo.push(`[Bilibili Rules] Set hash for secondary comment: #reply${commentSecondaryId}`);
-        } else if (commentRootId) {
-            url.hash = `reply${commentRootId}`;
-            debugInfo.push(`[Bilibili Rules] Set hash for root comment: #reply${commentRootId}`);
+        const commentId = commentSecondaryId || commentRootId;
+        if (commentId) {
+            url.hash = `reply${commentId}`;
+            debugInfo.push(`[Bilibili Rules] Set hash for comment: #reply${commentId}`);
+        }
+    }
+}
+
+function preserveDanmuParams(url: URL, debugInfo: string[]): void {
+    const danmuProgress = url.searchParams.get("dm_progress");
+    const danmuId = url.searchParams.get("dmid");
+
+    const newSearchParams = new URLSearchParams(url.searchParams);
+
+    // Keep only dm_progress, dmid, t parameters
+    for (const [key] of newSearchParams) {
+        if (key !== "dm_progress" && key !== "dmid" && key !== "t") {
+            newSearchParams.delete(key);
         }
     }
 
-    const tParam = url.searchParams.get("t");
-    url.search = tParam ? `?t=${tParam}` : "";
+    // Set the new search string
+    url.search = newSearchParams.toString();
 
-    return { url, debugInfo };
+    if (danmuProgress || danmuId) {
+        debugInfo.push("[Bilibili Rules] Preserved dm_progress and dmid parameters");
+    }
 }

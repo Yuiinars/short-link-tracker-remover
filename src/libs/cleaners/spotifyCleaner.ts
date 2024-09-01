@@ -1,9 +1,6 @@
 // ./libs/cleaners/spotifyCleaner.ts
 import { resolveUrl } from '../utils/urlResolver';
-interface CleanerResult {
-    url: URL;
-    debugInfo: string[];
-}
+import { CleanerResult } from "./baseCleaner";
 
 export async function spotifyCleaner(url: URL): Promise<CleanerResult> {
     const debugInfo: string[] = [];
@@ -13,7 +10,7 @@ export async function spotifyCleaner(url: URL): Promise<CleanerResult> {
 
     url = await resolveUrl(url.toString(), 'curl');
     url.search = '';
-    debugInfo.push(`[Spotify Rules] Resolved URL.`);
+    debugInfo.push(`[Spotify Rules] Resolved URL`);
 
     return { url, debugInfo };
 }

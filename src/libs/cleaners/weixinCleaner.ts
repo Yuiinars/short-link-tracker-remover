@@ -1,17 +1,10 @@
 // ./libs/cleaners/weixinCleaner.ts
-import { baseCleaner } from "./baseCleaner";
-
-interface CleanerResult {
-    url: URL;
-    debugInfo: string[];
-}
+import { baseCleaner, CleanerResult } from "./baseCleaner";
 
 export function weixinCleaner(url: URL): CleanerResult {
     const { url: baseCleanedUrl, debugInfo } = baseCleaner(url);
-    url = baseCleanedUrl;
 
-    const searchParams = url.searchParams;
-    const paramMapping = {
+    const paramMapping: Record<string, string> = {
         mid: "appmsgid",
         idx: "itemidx",
         sn: "sign"
@@ -20,19 +13,20 @@ export function weixinCleaner(url: URL): CleanerResult {
     const newSearchParams = new URLSearchParams();
     const keptParams: string[] = [];
 
-    allowedParams.forEach((param) => {
-        if (searchParams.has(param)) {
-            const newParam = paramMapping[param as keyof typeof paramMapping] || param;
-            newSearchParams.set(newParam, searchParams.get(param)!);
+    for (const param of allowedParams) {
+        const value = baseCleanedUrl.searchParams.get(param);
+        if (value) {
+            const newParam = paramMapping[param] || param;
+            newSearchParams.set(newParam, value);
             keptParams.push(newParam);
         }
-    });
+    }
 
-    url.search = newSearchParams.toString();
+    baseCleanedUrl.search = newSearchParams.toString();
 
     if (keptParams.length > 0) {
         debugInfo.push(`[Weixin Rules] Kept parameters: ${keptParams.join(", ")}`);
     }
 
-    return { url, debugInfo };
+    return { url: baseCleanedUrl, debugInfo };
 }

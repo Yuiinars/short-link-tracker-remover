@@ -1,10 +1,6 @@
 // ./libs/cleaners/wyyCleaner.ts
-import { baseCleaner } from "./baseCleaner";
+import { baseCleaner, CleanerResult } from "./baseCleaner";
 
-interface CleanerResult {
-    url: URL;
-    debugInfo: string[];
-}
 
 export function wyyCleaner(url: URL): CleanerResult {
     const { url: baseCleanedUrl, debugInfo } = baseCleaner(url);
