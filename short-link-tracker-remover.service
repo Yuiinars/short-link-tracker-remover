@@ -1,0 +1,18 @@
+[Unit]
+Description=Short Link Tracker Remover Service
+After=network.target
+
+[Service]
+ExecStart=/root/.bun/bin/bun run src/server.ts
+WorkingDirectory=/opt/short-link-tracker-remover
+Restart=always
+RestartSec=10
+User=root
+Group=root
+Environment=PATH=/usr/bin:/usr/local/bin:/root/.bun/bin
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=links-service
+
+[Install]
+WantedBy=multi-user.target
