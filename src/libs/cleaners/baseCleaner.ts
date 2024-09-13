@@ -21,14 +21,15 @@ export function baseCleaner(url: URL): CleanerResult {
         "trackId", "pvid", "spm", "scm", "app_platform", "app_version", "app_time", "appuid", "click_id",
         "click_time", "enterid", "exportkey", "wx_header", "xtrack", "pass_ticket", "sentry_key",
         "sentry_version", "sourceid", "_openstat", "cmpid", "_ga", "_gl", "tracking_source",
-        "unique_k", "unique",
+        "unique_k", "unique", "apptime",
         "__hsfp", "__hstc", "__hssc", "fb_action_ids", "tracking", "tt_medium", "tt_content", "trkid", "si",
         // Share parameters
         "share_relation", "share_medium", "sharesource", "share_source", "shareuid", "share_plat",
-        "share_from", "share_plat", "share_type", "share_id", "share_tag",
+        "share_from", "share_from_user_hidden", "xhsshare", "author_share", "xsec_source", "share_plat",
+        "share_type", "share_id", "share_tag",
         // Device parameters
         "device", "device_id", "device_type", "device_model", "device_brand", "device_os", "devicetype",
-        "nettype", "client_type", "device_platform", "client_version", 
+        "nettype", "client_type", "device_platform", "client_version",
     ];
 
     paramsToRemove.forEach((param) => {

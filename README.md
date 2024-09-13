@@ -29,7 +29,8 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 - [x] :globe_with_meridians: Multiple domain-specific cleaners
 - [x] :electric_plug: RESTful API for seamless integration
 - [x] :computer: 100% TypeScript implementation
-
+- [x] :shield: Comprehensive SSRF attack defense measures
+- [x] :package: Out-of-the-box, user-friendly setup and configuration
 
 ## Supported Services
 
@@ -39,7 +40,7 @@ A high-performance, TypeScript-based API that swiftly intercepts and sanitizes s
 | Youtube                 | :white_check_mark: Yes | `youtube.com`, `youtu.be`         |
 | Weixin                  | :white_check_mark: Yes | `mp.weixin.qq.com`                |
 | NetEase Cloud Music     | :white_check_mark: Yes | `music.163.com`, `163cn.tv`       |
-| Xiaohongshu             | :construction: (WIP)   | `xhs.link`, `xiaohongshu.com`     |
+| Xiaohongshu             | :white_check_mark: Yes | `xhs.link`, `xiaohongshu.com`     |
 | JD.com                  | :white_check_mark: Yes | `3.cn`                            |
 | Taobao/GooFish (Xianyu) | :white_check_mark: Yes | `m.tb.cn`, `tb.cn`                |
 | Spotify                 | :white_check_mark: Yes | `spotify.app.link`, `spotify.com` |

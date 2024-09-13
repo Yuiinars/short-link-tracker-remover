@@ -7,6 +7,7 @@ import { wyyCleaner } from "./cleaners/wyyCleaner";
 import { tbcnCleaner } from "./cleaners/tbcnCleaner";
 import { spotifyCleaner } from "./cleaners/spotifyCleaner";
 import { jdComCleaner } from "./cleaners/jdComCleaner";
+import { xhsCleaner } from "./cleaners/xhsCleaner";
 
 type SyncCleaner = (url: URL) => { url: URL; debugInfo: string[] };
 type AsyncCleaner = (url: URL) => Promise<{ url: URL; debugInfo: string[] }>;
@@ -17,25 +18,32 @@ interface CleanerResult {
     debugInfo: string[];
 }
 
-const cleaners: Record<string, Cleaner> = {
-    "youtube.com": youtubeCleaner,
-    "youtu.be": youtubeCleaner,
-    "bilibili.com": bilibiliCleaner,
-    "b23.tv": bilibiliCleaner,
-    "weixin.qq.com": weixinCleaner,
-    "163cn.tv": wyyCleaner,
-    "music.163.com": wyyCleaner,
-    "tb.cn": tbcnCleaner,
-    "spotify.app.link": spotifyCleaner,
-    "spotify.com": spotifyCleaner,
-    "jd.com": jdComCleaner,
-    "3.cn": jdComCleaner
-};
+interface CleanerRule {
+    domains: string[];
+    cleaner: Cleaner;
+}
+
+const cleanerRules: CleanerRule[] = [
+    { domains: ["youtube.com", "youtu.be"], cleaner: youtubeCleaner },
+    { domains: ["bilibili.com", "b23.tv"], cleaner: bilibiliCleaner },
+    { domains: ["weixin.qq.com"], cleaner: weixinCleaner },
+    { domains: ["163cn.tv", "music.163.com"], cleaner: wyyCleaner },
+    { domains: ["tb.cn"], cleaner: tbcnCleaner },
+    { domains: ["spotify.app.link", "spotify.com"], cleaner: spotifyCleaner },
+    { domains: ["jd.com", "3.cn"], cleaner: jdComCleaner },
+    { domains: ["xiaohongshu.com", "xhslink.com"], cleaner: xhsCleaner },
+];
+
+function generateDebugInfo(domain: string): string {
+    const firstSegment = domain.split('.')[0];
+    return `[${firstSegment} cleaner] Processed.`;
+}
 
 export function getCleanerForDomain(hostname: string): CleanerResult {
-    for (const [domain, cleaner] of Object.entries(cleaners)) {
-        if (hostname.endsWith(domain)) {
-            return { cleaner, debugInfo: [`[${domain.split('.')[0]} cleaner] Processed.`] };
+    for (const rule of cleanerRules) {
+        if (rule.domains.some(domain => hostname.endsWith(domain))) {
+            const debugInfo = generateDebugInfo(rule.domains[0]);
+            return { cleaner: rule.cleaner, debugInfo: [debugInfo] };
         }
     }
     return { cleaner: baseCleaner, debugInfo: ['[Base Rules] Processed.'] };

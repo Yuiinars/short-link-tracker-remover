@@ -124,7 +124,8 @@ const cleanAndFormatUrl = async (url: URL): Promise<Link> => {
   const { cleanedUrl, debugInfo } = await cleanUrl(url);
   return {
     original: url.toString(),
-    cleaned: encodeURI(cleanedUrl.toString()),
+    // cleaned: encodeURI(cleanedUrl.toString()), // Clean URI is encoded, so no need for re-encoding
+    cleaned: cleanedUrl.toString(),
     debugInfo: debugInfo.map(String),
   };
 };
