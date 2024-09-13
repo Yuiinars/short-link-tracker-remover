@@ -2,9 +2,8 @@
 import { baseCleaner, CleanerResult } from "./baseCleaner";
 
 export function bilibiliCleaner(url: URL): CleanerResult {
-    if (url.hostname === "b23.tv") {
-        return processB23tvLink(url);
-    }
+    if (url.hostname === "b23.tv") return processB23tvLink(url);
+    if (url.hostname === "mall.bilibili.com") return processMallLink(url);
 
     const { url: baseCleanedUrl, debugInfo } = baseCleaner(url);
 
@@ -26,6 +25,31 @@ function processB23tvLink(url: URL): CleanerResult {
         debugInfo.push("[Bilibili Rules] b23.tv Processed.");
     }
     return { url, debugInfo };
+}
+
+function processMallLink(url: URL): CleanerResult {
+    const debugInfo: string[] = ["[Bilibili Mall Rules] Processing link"];
+    const allowedParams = ["itemsId"];
+    const newSearchParams = new URLSearchParams();
+    const keptParams: string[] = [];
+
+    for (const param of allowedParams) {
+        const value = url.searchParams.get(param);
+        if (value) {
+            newSearchParams.set(param, value);
+            keptParams.push(param);
+        }
+    }
+
+    url.search = newSearchParams.toString();
+
+    if (keptParams.length > 0) {
+        debugInfo.push(`[Bilibili Mall Rules] Kept parameters: ${keptParams.join(", ")}`);
+    }
+
+    url.hash = "";
+
+    return { url: url, debugInfo };
 }
 
 function processStartProgress(url: URL, debugInfo: string[]): void {
